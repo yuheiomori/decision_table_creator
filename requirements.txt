@@ -1,0 +1,9 @@
+Django==1.4
+distribute==0.6.24
+dj-database-url==0.2.1
+gunicorn==0.14.6
+httplib2==0.7.4
+psycopg2==2.4.5
+simplejson==2.6.0
+tablib==0.9.11
+wsgiref==0.1.2
