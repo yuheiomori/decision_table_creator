@@ -8,7 +8,7 @@
 <html class="no-js" lang="ja" xmlns="http://www.w3.org/1999/html"
       xmlns="http://www.w3.org/1999/html"
       xmlns:og="http://ogp.me/ns#"
-      xmlns:fb="http://ogp.me/ns/fb#">
+      xmlns:fb="http://ogp.me/ns/fb#" xmlns="http://www.w3.org/1999/html">
 
 <!--<![endif]-->
 <head>
@@ -49,7 +49,7 @@ chromium.org/developers/how-tos/chrome-frame-getting-started -->
     <link href="css/bootstrap.ie6.css" rel="stylesheet">
   	<p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p>
   <![endif]-->
-<div class="navbar navbar-fixed-top">
+<div class="navbar navbar-inverse navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
             <a class="brand" href="/">
@@ -60,13 +60,31 @@ chromium.org/developers/how-tos/chrome-frame-getting-started -->
 </div>
 
 <div class="container" id="container">
+    {% if messages %}
+            {% for message in messages %}
+                <div class="alert">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+    {% endif %}
 
-    <form id="mainForm" action="export"  method="GET">
+    <form id="mainForm" action="export"  method="POST">
+        {% csrf_token %}
+        <legend>テストケースの作成方法</legend>
+        {{ kind_form.kind }}{{ kind_form.kind.errors }}
+
         <legend>条件</legend>
         {{ condition_formset.management_form }}
         {% for form in condition_formset %}
             <div class="each_condition_form" {% if not forloop.first %} style="display: none;"{% endif %}>
-                <label>{{ form.title.label }}{{ forloop.counter }}</label>{{ form.title }}{{ form.title.errors }}
+
+                <div class="control-group{% if form.title.errors %} error{% endif %}">
+                    <label>{{ form.title.label }}{{ forloop.counter }}</label>
+                    <div class="controls">
+                        {{ form.title }} <span class="help-inline">{{ form.title.errors.as_text }}</span>
+                    </div>
+                </div>
 
                 <label>選択肢</label>
                 {{ form.variation1 }}{{ form.variation1.errors }}
@@ -74,6 +92,11 @@ chromium.org/developers/how-tos/chrome-frame-getting-started -->
                 {{ form.variation3 }}{{ form.variation3.errors }}
                 {{ form.variation4 }}{{ form.variation4.errors }}
                 {{ form.variation5 }}{{ form.variation5.errors }}
+                {{ form.variation6 }}{{ form.variation6.errors }}
+                {{ form.variation7 }}{{ form.variation7.errors }}
+                {{ form.variation8 }}{{ form.variation8.errors }}
+                {{ form.variation9 }}{{ form.variation9.errors }}
+                {{ form.variation10 }}{{ form.variation10.errors }}
 
             </div>
         {% endfor %}
@@ -147,6 +170,12 @@ chromium.org/developers/how-tos/chrome-frame-getting-started -->
 
 <script type="text/javascript">
     $(function() {
+        $('.each_condition_form').add($('.each_action_form')).each(function(){
+            if ($(this).find('input').filter(function(){return $(this).val() !== ''}).length > 0){
+                $(this).show();
+            }
+        });
+
         $('#add_condition').click(function(e){
             e.preventDefault();
             $('.each_condition_form:hidden').first().show();
@@ -156,6 +185,7 @@ chromium.org/developers/how-tos/chrome-frame-getting-started -->
             e.preventDefault();
             $('.each_action_form:hidden').first().show();
         });
+
         $('#remove_condition').click(function(e){
             e.preventDefault();
             var forms = $('.each_condition_form:visible');
